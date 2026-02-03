@@ -1,4 +1,9 @@
-// YouTubeページタイプごとの動画要素セレクタ
+// 定数定義
+
+/**
+ * YouTubeページタイプごとの動画要素セレクタ
+ * @type {Object.<string, {container: string, videoLinks: string, videoItems?: string, video?: string, playerContainer?: string}>}
+ */
 const YOUTUBE_SELECTORS = {
   // 検索結果ページ
   SEARCH_RESULTS: {
@@ -35,6 +40,13 @@ const YOUTUBE_SELECTORS = {
     videoItems: 'ytd-grid-video-renderer, ytd-video-renderer'
   },
 
+  // 視聴ページ（関連動画）
+  WATCH: {
+    container: 'ytd-watch-flexy',
+    videoLinks: 'ytd-compact-video-renderer a#video-title, ytd-compact-video-renderer a.yt-simple-endpoint[href*="/watch"]',
+    videoItems: 'ytd-compact-video-renderer'
+  },
+
   // 動画プレイヤー
   PLAYER: {
     video: 'video.html5-main-video',
@@ -42,7 +54,10 @@ const YOUTUBE_SELECTORS = {
   }
 };
 
-// ストレージキー
+/**
+ * Chrome Storageで使用するキー
+ * @type {Object.<string, string>}
+ */
 const STORAGE_KEYS = {
   AUTO_PLAY_ENABLED: 'autoPlayEnabled',
   CURRENT_PLAYLIST: 'currentPlaylist',
@@ -50,9 +65,6 @@ const STORAGE_KEYS = {
   PAGE_TYPE: 'pageType'
 };
 
-// イベント名
-const EVENTS = {
-  VIDEO_ENDED: 'videoEnded',
-  NEXT_VIDEO: 'nextVideo',
-  STATE_CHANGED: 'stateChanged'
-};
+// Object.freeze で定数を不変にする
+Object.freeze(YOUTUBE_SELECTORS);
+Object.freeze(STORAGE_KEYS);

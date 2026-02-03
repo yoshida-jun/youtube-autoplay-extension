@@ -1,11 +1,20 @@
 // YouTube動画検出クラス
+
+/**
+ * YouTubeページから動画を検出するクラス
+ */
 class VideoDetector {
   constructor() {
+    /** @type {MutationObserver|null} */
     this.observer = null;
+    /** @type {string|null} */
     this.currentPageType = null;
   }
 
-  // 現在のページタイプを判定
+  /**
+   * 現在のページタイプを判定
+   * @returns {string} ページタイプ
+   */
   detectPageType() {
     const url = window.location.href;
     const pathname = window.location.pathname;
@@ -20,63 +29,187 @@ class VideoDetector {
     return 'UNKNOWN';
   }
 
-  // ページから動画リストを取得
+  /**
+   * ページから動画リストを取得
+   * @returns {Array<{index: number, url: string, title: string, element: HTMLElement}>}
+   */
   getVideoList() {
     const pageType = this.detectPageType();
     const selectors = YOUTUBE_SELECTORS[pageType];
 
-    console.log('[Video Detector] ページタイプ:', pageType);
+    Logger.log('VideoDetector', 'ページタイプ:', pageType);
 
     if (!selectors) {
-      console.warn('[Video Detector] セレクタが見つかりません:', pageType);
+      Logger.warn('VideoDetector', 'セレクタが見つかりません:', pageType);
       return [];
     }
 
     // コンテナが読み込まれるまで待機
     const container = document.querySelector(selectors.container);
     if (!container) {
-      console.warn('[Video Detector] コンテナが見つかりません:', selectors.container);
+      Logger.warn('VideoDetector', 'コンテナが見つかりません:', selectors.container);
       return [];
     }
-
-    console.log('[Video Detector] コンテナ発見:', container);
 
     // 動画リンクを取得
     const videoLinks = Array.from(
       document.querySelectorAll(selectors.videoLinks)
     );
 
-    console.log('[Video Detector] 動画リンク数:', videoLinks.length);
+    Logger.log('VideoDetector', '動画リンク数:', videoLinks.length);
 
-    // デバッグ: 最初の5個のリンクをログ出力
+    // 動画リンクが見つからない場合の代替処理
     if (videoLinks.length === 0) {
-      console.warn('[Video Detector] 動画リンクが見つかりません。セレクタ:', selectors.videoLinks);
-      // すべての動画タイトルリンクを探してログ出力
-      const allLinks = document.querySelectorAll('a[href*="/watch"]');
-      console.log('[Video Detector] /watch を含むリンク数:', allLinks.length);
-      if (allLinks.length > 0) {
-        console.log('[Video Detector] 最初のリンクのID:', allLinks[0].id);
-        console.log('[Video Detector] 最初のリンクのクラス:', allLinks[0].className);
-        console.log('[Video Detector] 最初のリンクのaria-label:', allLinks[0].getAttribute('aria-label'));
+      return this.getFallbackVideoList();
+    }
 
-        // より詳しい情報
-        for (let i = 0; i < Math.min(3, allLinks.length); i++) {
-          const link = allLinks[i];
-          const parent = link.closest('ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer');
-          console.log(`[Video Detector] リンク${i}の親要素:`, parent ? parent.tagName : 'なし');
+    return videoLinks.map((link, index) => {
+      // 日付情報を親要素から探す
+      const dateText = this.extractDateFromElement(link);
+      return {
+        index,
+        url: link.href,
+        title: link.textContent.trim(),
+        dateText: dateText,
+        element: link
+      };
+    }).filter(video => video.url && video.url.includes('/watch?v='));
+  }
+
+  /**
+   * 要素から日付テキストを抽出
+   * @param {HTMLElement} link - 動画リンク要素
+   * @returns {string} 日付テキスト（例: "1日前", "2週間前"）
+   */
+  extractDateFromElement(link) {
+    // 親要素を遡って動画カード全体を探す
+    let container = link.closest('ytd-video-renderer, ytd-rich-item-renderer, ytd-compact-video-renderer, ytd-grid-video-renderer, ytd-playlist-video-renderer');
+    if (!container) {
+      container = link.parentElement?.parentElement?.parentElement;
+    }
+    if (!container) return '';
+
+    // メタデータ行から日付を探す
+    const metadataLine = container.querySelector('#metadata-line');
+    if (metadataLine) {
+      const spans = metadataLine.querySelectorAll('span.inline-metadata-item');
+      for (const span of spans) {
+        const text = span.textContent.trim();
+        if (this.isDateText(text)) {
+          return text;
         }
       }
     }
 
-    return videoLinks.map((link, index) => ({
-      index,
-      url: link.href,
-      title: link.textContent.trim(),
-      element: link
-    })).filter(video => video.url && video.url.includes('/watch?v='));
+    // 代替: aria-labelから日付を抽出
+    const ariaLabel = container.getAttribute('aria-label') || link.getAttribute('aria-label') || '';
+    const dateMatch = ariaLabel.match(/(\d+\s*(?:秒|分|時間|日|週間|か月|年)\s*前)/);
+    if (dateMatch) {
+      return dateMatch[1];
+    }
+
+    return '';
   }
 
-  // 動画リストの動的な変更を監視
+  /**
+   * テキストが日付形式かチェック
+   * @param {string} text - チェックするテキスト
+   * @returns {boolean}
+   */
+  isDateText(text) {
+    return /^\d+\s*(?:秒|分|時間|日|週間|か月|年)\s*前$/.test(text) ||
+           /^\d+\s*(?:second|minute|hour|day|week|month|year)s?\s*ago$/i.test(text);
+  }
+
+  /**
+   * 日付テキストを日数に変換（フィルタリング用）
+   * @param {string} dateText - 日付テキスト
+   * @returns {number} 日数（推定）
+   */
+  static parseDateTextToDays(dateText) {
+    if (!dateText) return Infinity;
+
+    // 日本語パターン
+    const jpMatch = dateText.match(/(\d+)\s*(秒|分|時間|日|週間|か月|年)\s*前/);
+    if (jpMatch) {
+      const num = parseInt(jpMatch[1], 10);
+      const unit = jpMatch[2];
+      switch (unit) {
+        case '秒': return 0;
+        case '分': return 0;
+        case '時間': return num / 24;
+        case '日': return num;
+        case '週間': return num * 7;
+        case 'か月': return num * 30;
+        case '年': return num * 365;
+      }
+    }
+
+    // 英語パターン
+    const enMatch = dateText.match(/(\d+)\s*(second|minute|hour|day|week|month|year)s?\s*ago/i);
+    if (enMatch) {
+      const num = parseInt(enMatch[1], 10);
+      const unit = enMatch[2].toLowerCase();
+      switch (unit) {
+        case 'second': return 0;
+        case 'minute': return 0;
+        case 'hour': return num / 24;
+        case 'day': return num;
+        case 'week': return num * 7;
+        case 'month': return num * 30;
+        case 'year': return num * 365;
+      }
+    }
+
+    return Infinity;
+  }
+
+  /**
+   * セレクタで見つからない場合の代替取得
+   * @returns {Array<{index: number, url: string, title: string, dateText: string, element: HTMLElement}>}
+   */
+  getFallbackVideoList() {
+    const allLinks = document.querySelectorAll('a[href*="/watch"]');
+    Logger.log('VideoDetector', '代替検索 - /watch を含むリンク数:', allLinks.length);
+
+    if (allLinks.length === 0) {
+      return [];
+    }
+
+    const videos = [];
+    const seenUrls = new Set();
+
+    allLinks.forEach((link, index) => {
+      const url = link.href;
+      // 重複を除外し、有効な動画リンクのみを取得
+      if (url && url.includes('/watch?v=') && !seenUrls.has(url)) {
+        const title = link.textContent.trim() ||
+                      link.getAttribute('aria-label') ||
+                      link.getAttribute('title') ||
+                      `動画 ${index + 1}`;
+
+        if (title.length > 0 && title.length < 500) {
+          seenUrls.add(url);
+          const dateText = this.extractDateFromElement(link);
+          videos.push({
+            index: videos.length,
+            url,
+            title,
+            dateText,
+            element: link
+          });
+        }
+      }
+    });
+
+    Logger.log('VideoDetector', '代替検索で取得した動画数:', videos.length);
+    return videos;
+  }
+
+  /**
+   * 動画リストの動的な変更を監視
+   * @param {function(Array): void} callback - 変更時のコールバック
+   */
   observeVideoList(callback) {
     const pageType = this.detectPageType();
     const selectors = YOUTUBE_SELECTORS[pageType];
@@ -89,7 +222,7 @@ class VideoDetector {
     }
 
     // MutationObserverでDOM変更を監視
-    this.observer = new MutationObserver((mutations) => {
+    this.observer = new MutationObserver(() => {
       const videoList = this.getVideoList();
       callback(videoList);
     });
@@ -103,7 +236,9 @@ class VideoDetector {
     }
   }
 
-  // オブザーバーを停止
+  /**
+   * オブザーバーを停止
+   */
   stopObserving() {
     if (this.observer) {
       this.observer.disconnect();

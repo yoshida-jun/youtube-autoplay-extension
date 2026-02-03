@@ -10,6 +10,7 @@
   <div class="popup-container">
     <div class="popup-header">
       <h1>YouTube Auto Player</h1>
+      <button id="btn-help" class="btn-help" title="ヘルプ">?</button>
     </div>
 
     <div class="status-section">
@@ -18,23 +19,101 @@
         <span id="status-autoplay" class="value">OFF</span>
       </div>
       <div class="status-item">
-        <span class="label">現在の位置:</span>
-        <span id="status-position" class="value">0 / 0</span>
+        <span class="label">選択中:</span>
+        <span id="status-selected" class="value">0 / 0</span>
       </div>
     </div>
 
     <div class="controls-section">
-      <button id="btn-toggle" class="btn btn-primary">
-        自動再生を開始
+      <button id="btn-collect" class="btn btn-primary">
+        動画を収集
+      </button>
+      <button id="btn-toggle" class="btn btn-success">
+        選択動画を再生
       </button>
       <button id="btn-reset" class="btn btn-secondary">
         リセット
       </button>
     </div>
 
+    <!-- プレイリストセクション -->
+    <div id="playlist-section" class="playlist-section">
+      <div class="playlist-header">
+        <span>プレイリスト</span>
+        <button id="btn-toggle-playlist" class="btn-expand" title="展開/折りたたみ">▼</button>
+      </div>
+
+      <!-- フィルターセクション -->
+      <div id="filter-section" class="filter-section">
+        <div class="filter-row">
+          <input type="text" id="filter-keyword" class="filter-input" placeholder="キーワードで絞り込み...">
+        </div>
+        <div class="filter-row filter-options">
+          <label class="checkbox-label">
+            <input type="checkbox" id="filter-select-all">
+            <span>すべて選択</span>
+          </label>
+          <select id="filter-sort" class="filter-select">
+            <option value="default">並び順: デフォルト</option>
+            <option value="title-asc">タイトル (A→Z)</option>
+            <option value="title-desc">タイトル (Z→A)</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="playlist-content" class="playlist-content">
+        <div id="playlist-empty" class="playlist-empty">
+          動画がありません<br>
+          <small>YouTubeページで「動画を収集」をクリック</small>
+        </div>
+        <ul id="playlist-list" class="playlist-list hidden"></ul>
+      </div>
+
+      <div id="playlist-footer" class="playlist-footer hidden">
+        <span id="filter-count">0件表示</span>
+      </div>
+    </div>
+
+    <!-- ヘルプセクション -->
+    <div id="help-section" class="help-section hidden">
+      <div class="help-header">
+        <span>使い方ガイド</span>
+        <button id="btn-close-help" class="btn-close">&times;</button>
+      </div>
+      <div class="help-content">
+        <div class="help-item">
+          <div class="help-step">1</div>
+          <div class="help-text">
+            <strong>動画一覧ページを開く</strong>
+            <p>検索結果、チャンネル、プレイリストなどのページを開きます</p>
+          </div>
+        </div>
+        <div class="help-item">
+          <div class="help-step">2</div>
+          <div class="help-text">
+            <strong>動画を収集</strong>
+            <p>「動画を収集」ボタンでページ内の動画を取得します</p>
+          </div>
+        </div>
+        <div class="help-item">
+          <div class="help-step">3</div>
+          <div class="help-text">
+            <strong>絞り込み＆選択</strong>
+            <p>キーワードで絞り込み、再生したい動画にチェックを入れます</p>
+          </div>
+        </div>
+        <div class="help-item">
+          <div class="help-step">4</div>
+          <div class="help-text">
+            <strong>再生開始！</strong>
+            <p>「選択動画を再生」で自動再生が始まります</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="info-section">
-      <p>YouTubeページで動画リストを自動再生します</p>
-      <p class="version">v1.0.4</p>
+      <p class="version">v1.1.0</p>
     </div>
   </div>
 

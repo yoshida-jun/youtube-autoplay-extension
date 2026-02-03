@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Auto Player</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <h1>YouTube Auto Player</h1>
+    </div>
+
+    <div class="status-section">
+      <div class="status-item">
+        <span class="label">自動再生:</span>
+        <span id="status-autoplay" class="value">OFF</span>
+      </div>
+      <div class="status-item">
+        <span class="label">現在の位置:</span>
+        <span id="status-position" class="value">0 / 0</span>
+      </div>
+    </div>
+
+    <div class="controls-section">
+      <button id="btn-toggle" class="btn btn-primary">
+        自動再生を開始
+      </button>
+      <button id="btn-reset" class="btn btn-secondary">
+        リセット
+      </button>
+    </div>
+
+    <div class="info-section">
+      <p>YouTubeページで動画リストを自動再生します</p>
+      <p class="version">v1.0.4</p>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

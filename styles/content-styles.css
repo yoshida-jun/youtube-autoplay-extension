@@ -1,0 +1,134 @@
+/* YouTube Auto Player コントロールパネル */
+.yt-autoplay-panel {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 280px;
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  font-family: 'Roboto', Arial, sans-serif;
+  transition: all 0.3s ease;
+}
+
+.yt-autoplay-panel.minimized {
+  width: 200px;
+}
+
+.yt-autoplay-panel.minimized .yt-autoplay-body {
+  display: none;
+}
+
+/* ヘッダー */
+.yt-autoplay-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background: #ff0000;
+  color: white;
+  border-radius: 8px 8px 0 0;
+  cursor: move;
+}
+
+.yt-autoplay-title {
+  font-weight: 500;
+  font-size: 14px;
+  user-select: none;
+}
+
+.yt-autoplay-btn-icon {
+  background: transparent;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  transition: background 0.2s;
+  border-radius: 4px;
+}
+
+.yt-autoplay-btn-icon:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* ボディ */
+.yt-autoplay-body {
+  padding: 16px;
+}
+
+/* ステータス表示 */
+.yt-autoplay-status {
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+/* コントロールボタン */
+.yt-autoplay-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.yt-autoplay-btn {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  background: #f1f1f1;
+  color: #333;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.yt-autoplay-btn:hover {
+  background: #e0e0e0;
+}
+
+.yt-autoplay-btn:active {
+  transform: scale(0.98);
+}
+
+.yt-autoplay-btn.active {
+  background: #ff0000;
+  color: white;
+}
+
+.yt-autoplay-btn.active:hover {
+  background: #cc0000;
+}
+
+/* トグルボタンアイコン */
+.yt-autoplay-toggle-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.yt-autoplay-icon {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.yt-autoplay-btn.active .yt-autoplay-icon {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}

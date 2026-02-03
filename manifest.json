@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Auto Player",
+  "version": "1.0.4",
+  "description": "YouTube動画一覧を順番に自動再生",
+
+  "permissions": [
+    "storage",
+    "tabs"
+  ],
+
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background/service-worker.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": [
+        "utils/constants.js",
+        "utils/storage.js",
+        "content/video-detector.js",
+        "content/player-controller.js",
+        "content/ui-injector.js",
+        "content/content-script.js"
+      ],
+      "css": ["styles/content-styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

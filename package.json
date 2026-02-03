@@ -1,0 +1,16 @@
+{
+  "name": "youtube-autoplay-extension",
+  "version": "1.0.0",
+  "description": "YouTube Auto Player Extension Development Server",
+  "main": "server/index.js",
+  "scripts": {
+    "dev": "node server/index.js",
+    "build": "node server/build.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "archiver": "^6.0.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {}
+}

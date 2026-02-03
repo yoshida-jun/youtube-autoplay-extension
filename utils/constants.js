@@ -1,0 +1,58 @@
+// YouTubeページタイプごとの動画要素セレクタ
+const YOUTUBE_SELECTORS = {
+  // 検索結果ページ
+  SEARCH_RESULTS: {
+    container: 'ytd-search',
+    videoLinks: 'ytd-video-renderer a#video-title',
+    videoItems: 'ytd-video-renderer'
+  },
+
+  // 再生リストページ
+  PLAYLIST: {
+    container: 'ytd-playlist-video-list-renderer',
+    videoLinks: 'ytd-playlist-video-renderer a.yt-simple-endpoint',
+    videoItems: 'ytd-playlist-video-renderer'
+  },
+
+  // チャンネルページ
+  CHANNEL: {
+    container: 'ytd-grid-renderer',
+    videoLinks: 'ytd-grid-video-renderer a#video-title',
+    videoItems: 'ytd-grid-video-renderer'
+  },
+
+  // ホーム/おすすめページ
+  HOME: {
+    container: 'ytd-app',
+    videoLinks: 'ytd-rich-item-renderer h3 a, ytd-video-renderer h3 a, ytd-grid-video-renderer h3 a',
+    videoItems: 'ytd-rich-item-renderer, ytd-video-renderer, ytd-grid-video-renderer'
+  },
+
+  // サブスクリプションページ
+  SUBSCRIPTIONS: {
+    container: 'ytd-app',
+    videoLinks: 'ytd-grid-video-renderer h3 a, ytd-video-renderer h3 a, ytd-rich-item-renderer h3 a',
+    videoItems: 'ytd-grid-video-renderer, ytd-video-renderer'
+  },
+
+  // 動画プレイヤー
+  PLAYER: {
+    video: 'video.html5-main-video',
+    playerContainer: '#movie_player'
+  }
+};
+
+// ストレージキー
+const STORAGE_KEYS = {
+  AUTO_PLAY_ENABLED: 'autoPlayEnabled',
+  CURRENT_PLAYLIST: 'currentPlaylist',
+  CURRENT_INDEX: 'currentIndex',
+  PAGE_TYPE: 'pageType'
+};
+
+// イベント名
+const EVENTS = {
+  VIDEO_ENDED: 'videoEnded',
+  NEXT_VIDEO: 'nextVideo',
+  STATE_CHANGED: 'stateChanged'
+};

@@ -1,0 +1,11 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景 -->
+  <rect width="128" height="128" fill="#FF0000" rx="16"/>
+
+  <!-- 再生アイコン -->
+  <path d="M 45 35 L 45 93 L 90 64 Z" fill="white"/>
+
+  <!-- 次へアイコン（小さめ） -->
+  <path d="M 90 50 L 90 78" stroke="white" stroke-width="6" stroke-linecap="round"/>
+  <path d="M 96 50 L 96 78" stroke="white" stroke-width="6" stroke-linecap="round"/>
+</svg>
